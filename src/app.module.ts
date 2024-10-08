@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { APP_PIPE } from '@nestjs/core';
 import { GroupModule } from './group/group.module';
 import { MessageModule } from './message/message.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -26,7 +27,8 @@ import { MessageModule } from './message/message.module';
     }),
     UserModule,
     GroupModule,
-    MessageModule
+    MessageModule,
+    AuthModule
   ],
   controllers: [],
   providers: [

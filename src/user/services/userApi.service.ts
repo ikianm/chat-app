@@ -13,4 +13,12 @@ export class UserApiService {
         return await this.userRepository.findById(objectId);
     }
 
+    async findByUsername(username: string): Promise<User> {
+        return await this.userRepository.findByUsername(username);
+    }
+
+    async create(username: string, hashedPassword: string): Promise<User> {
+        return await this.userRepository.create(username, hashedPassword);
+    }
+
 }

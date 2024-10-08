@@ -1,21 +1,21 @@
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGateway } from "@nestjs/websockets";
-import { Socket } from "socket.io";
-
+import { Server, Socket } from "socket.io";
 
 @WebSocketGateway()
 export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
     private connectedSockets = new Map<string, Socket>();
 
-    afterInit(server: any) {
-        // passport & session
+
+    afterInit(server: Server) {
+        console.log('wss initialized');
     }
 
-    handleConnection(client: any, ...args: any[]) {
-
+    handleConnection(client: Socket, ...args: any[]) {
+        console.log(`${client.id} connected`);
     }
 
-    handleDisconnect(client: any) {
+    handleDisconnect(client: Socket) {
 
     }
 

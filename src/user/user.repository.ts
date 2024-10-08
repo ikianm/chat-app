@@ -16,4 +16,13 @@ export class UserRepository {
         return await this.userModel.findById(objectId);
     }
 
+    async findByUsername(username: string): Promise<User> {
+        return await this.userModel.findOne({ username });
+    }
+
+    async create(username: string, hashedPassword: string): Promise<User> {
+        const newUser = new this.userModel({ username, password: hashedPassword });
+        return await newUser.save();
+    }
+
 }
