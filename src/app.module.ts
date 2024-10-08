@@ -3,10 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { appConfig } from '../configs/app.config';
 import { UserModule } from './user/user.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GroupModule } from './group/group.module';
 import { MessageModule } from './message/message.module';
 import { AuthModule } from './auth/auth.module';
+import { RequestContextModule } from 'nestjs-request-context';
+import { JwtAuthGuard } from './auth/guards/jwtAuth.guard';
 
 
 @Module({
@@ -25,6 +27,7 @@ import { AuthModule } from './auth/auth.module';
       },
       inject: [ConfigService]
     }),
+    RequestContextModule,
     UserModule,
     GroupModule,
     MessageModule,

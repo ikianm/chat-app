@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserApiService } from '../user/services/userApi.service';
-import { RegisterDto } from './dto/register.dto';
-import { hash } from 'bcrypt';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserApiService } from '../../user/services/userApi.service';
+import { RegisterDto } from '../dto/register.dto';
+import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../user/user.schema';
+import { User } from '../../user/user.schema';
+import { appConfig } from '../../../configs/app.config';
 
 @Injectable()
 export class AuthService {
@@ -16,14 +17,17 @@ export class AuthService {
     async validateUser(username: string, password: string): Promise<User> {
 
         const user = await this.userApiService.findByUsername(username);
-        if (!user && user.password !== password) return null;
+        if (!user) throw new BadRequestException('no user found');
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) throw new UnauthorizedException('invalid password');
 
         return user;
 
     }
 
     login(user: Partial<User>): { accessToken: string } {
-        const payload = { username: user.username, _id: user._id };
+        const payload = { _id: user._id, username: user.username, groups: user.groups };
 
         return {
             accessToken: this.jwtService.sign(payload)
@@ -34,12 +38,13 @@ export class AuthService {
         const isUsernameInUse = (await this.userApiService.findByUsername(registerDto.username));
         if (isUsernameInUse) throw new BadRequestException('username already in use');
 
-        const hashedPassword = await hash(registerDto.password, 10);
+        const hashedPassword = await bcrypt.hash(registerDto.password, 10);
         const newUser = await this.userApiService.create(registerDto.username, hashedPassword);
 
         return {
             _id: newUser._id,
-            username: newUser.username
+            username: newUser.username,
+            groups: newUser.groups
         };
     }
 

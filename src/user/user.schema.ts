@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { ObjectId } from "mongoose";
-
+import mongoose, { ObjectId } from "mongoose";
 
 @Schema()
 export class User {
@@ -12,6 +11,9 @@ export class User {
 
     @Prop({ required: true })
     password: string;
+
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+    groups: ObjectId[];
 
 }
 

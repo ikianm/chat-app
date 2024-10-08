@@ -8,7 +8,7 @@ export class SendMessageDto {
     senderId: ObjectId;
 
     @IsMongoId()
-    recepientId: ObjectId;
+    recepientId: ObjectId; // either user._id or group._id
 
     @IsString()
     @MinLength(1)

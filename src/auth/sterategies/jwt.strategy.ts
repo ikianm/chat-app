@@ -14,11 +14,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             ignoreExpiration: false,
             secretOrKey: appConfig().jwtSecret
         });
+
     }
 
     async validate(user: Partial<User>) {
+
+
+
         return {
-            _id: user._id, username: user.username
+            _id: user._id, username: user.username, groups: user.groups
         }; // sets req.user
     }
 

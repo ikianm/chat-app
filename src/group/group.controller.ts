@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { GroupService } from "./group.service";
 import { CreateGroupDto } from "./dtos/createGroup.dto";
 import { ObjectIdParamDto } from "../shares/objectIdParam.dto";
+import { JoinUserDto } from "./dtos/joinGroup.dto";
+import { JwtAuthGuard } from "../auth/guards/jwtAuth.guard";
+import { LeaveUserDto } from "./dtos/leaveUser.dto";
 
-
+@UseGuards(JwtAuthGuard)
 @Controller('groups')
 export class GroupController {
 
@@ -19,6 +22,14 @@ export class GroupController {
         return this.groupService.delete(objectIdParamDto);
     }
 
-    // TODO: leave, join, ...
+    @Post('/join')
+    joinUser(@Body() joinUserDto: JoinUserDto) {
+        return this.groupService.joinUser(joinUserDto);
+    }
 
-}
+    @Post('/leave')
+    leaveUser(@Body() leaveUserDto: LeaveUserDto) {
+        return this.groupService.leaveUser(leaveUserDto);
+    }
+
+}  

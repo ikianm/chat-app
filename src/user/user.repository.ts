@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User } from "./user.schema";
 import { Model, ObjectId } from "mongoose";
+import { Group } from "../group/group.schema";
 
 
 @Injectable()
@@ -21,8 +22,12 @@ export class UserRepository {
     }
 
     async create(username: string, hashedPassword: string): Promise<User> {
-        const newUser = new this.userModel({ username, password: hashedPassword });
+        const newUser = new this.userModel({ username, password: hashedPassword, groups: [] });
         return await newUser.save();
+    }
+
+    async updateGroups(id: ObjectId, groups: ObjectId[]) {
+        return await this.userModel.updateOne({ _id: id }, { groups });
     }
 
 }

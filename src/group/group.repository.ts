@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Group } from "./group.schema";
-import { Model } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 import DeleteResult from 'mongoose';
 import { CreateGroupDto } from "./dtos/createGroup.dto";
 import { ObjectIdParamDto } from "../shares/objectIdParam.dto";
@@ -22,6 +22,10 @@ export class GroupRepository {
     async deleteOne(objectIdParamDto: ObjectIdParamDto): Promise<any> {
 
         return await this.groupModel.deleteOne({ _id: objectIdParamDto.objectId });
+    }
+
+    async findById(id: ObjectId): Promise<Group> {
+        return await this.groupModel.findById(id);
     }
 
 }
