@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { GroupService } from "./group.service";
 import { CreateGroupDto } from "./dtos/createGroup.dto";
 import { ObjectIdParamDto } from "../shares/objectIdParam.dto";
@@ -12,6 +12,11 @@ export class GroupController {
 
     constructor(private readonly groupService: GroupService) { }
 
+    @Get(':objectId')
+    getGroupMessages(@Param() objectIdParamDto: ObjectIdParamDto) {
+        return this.groupService.getGroupMessages(objectIdParamDto);
+    }
+
     @Post()
     create(@Body() createGroupDto: CreateGroupDto) {
         return this.groupService.create(createGroupDto);
@@ -22,12 +27,12 @@ export class GroupController {
         return this.groupService.delete(objectIdParamDto);
     }
 
-    @Post('/join')
+    @Post('join')
     joinUser(@Body() joinUserDto: JoinUserDto) {
         return this.groupService.joinUser(joinUserDto);
     }
 
-    @Post('/leave')
+    @Post('leave')
     leaveUser(@Body() leaveUserDto: LeaveUserDto) {
         return this.groupService.leaveUser(leaveUserDto);
     }

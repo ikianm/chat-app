@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Message } from "./message.schema";
-import { Model } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 import { SendMessageDto } from "./dto/sendMessage.dto";
 
 
@@ -19,6 +19,17 @@ export class MessageRepository {
             sentAt: new Date()
         });
         return await newMessage.save();
+    }
+
+    async findPrivateMessages(senderId: ObjectId, recepientId: ObjectId): Promise<Message[]> {
+        return await this.messageModel.find({
+            senderId,
+            recepientId
+        }).lean(true);
+    }
+
+    async findGroupMessages(groupId: ObjectId): Promise<Message[]> {
+        return await this.messageModel.find({ recepientId: groupId }).lean(true);
     }
 
 }

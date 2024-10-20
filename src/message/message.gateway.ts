@@ -43,6 +43,9 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
     privateMessage(sendMessageDto: SendMessageDto) {
         const { recepientId } = sendMessageDto;
 
+        if (!this.connections.has(recepientId)) return;
+
+
         const isRecepientAGroup = this.rooms.includes(recepientId);
         if (isRecepientAGroup) {
             return this.wss.to(`${recepientId}`).emit('groupMessage', sendMessageDto);
@@ -51,8 +54,6 @@ export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect 
         const receiverSocket = this.connections.get(sendMessageDto.recepientId);
         return receiverSocket.emit('privateMessage', JSON.stringify(sendMessageDto));
     }
-
-
 
 
 }

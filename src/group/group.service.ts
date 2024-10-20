@@ -7,6 +7,9 @@ import { JoinUserDto } from "./dtos/joinGroup.dto";
 import { UserApiService } from "../user/services/userApi.service";
 import { LeaveUserDto } from "./dtos/leaveUser.dto";
 import { UpdateWriteOpResult } from "mongoose";
+import { Message } from "../message/message.schema";
+import { MessageApiService } from "../message/services/messageApi.service";
+import { RequestContextService } from "../shares/requestContext";
 
 
 @Injectable()
@@ -14,8 +17,21 @@ export class GroupService {
 
     constructor(
         private readonly groupRepo: GroupRepository,
-        private readonly userApiService: UserApiService
+        private readonly userApiService: UserApiService,
+        private readonly messageApiService: MessageApiService
     ) { }
+
+    async getGroupMessages(objectIdParamDto: ObjectIdParamDto): Promise<Message[]> {
+        const groupId = objectIdParamDto.objectId;
+        const group = await this.groupRepo.findById(groupId);
+        if (!group) throw new BadRequestException('no group found with the given id');
+
+        const currentUser = RequestContextService.getCurrentUser();
+        
+        if (!currentUser.groups.includes(groupId)) throw new BadRequestException('you are not a member of this group');
+
+        return await this.messageApiService.findGroupMessages(groupId);
+    }
 
     async create(createGroupDto: CreateGroupDto): Promise<Group> {
         return await this.groupRepo.create(createGroupDto);

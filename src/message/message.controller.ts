@@ -1,10 +1,11 @@
-import { Body, Controller, Post, UseGuards } from "@nestjs/common";
-import { MessageService } from "./message.service";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { MessageService } from "./services/message.service";
 import { SendMessageDto } from "./dto/sendMessage.dto";
 import { MessageGateway } from "./message.gateway";
 import { JwtAuthGuard } from "../auth/guards/jwtAuth.guard";
+import { ObjectIdParamDto } from "../shares/objectIdParam.dto";
 
-
+@UseGuards(JwtAuthGuard)
 @Controller('messages')
 export class MessageController {
 
@@ -13,7 +14,11 @@ export class MessageController {
         private readonly messageGateway: MessageGateway
     ) { }
 
-    @UseGuards(JwtAuthGuard)
+    @Get(':objectId')
+    getPrivateMessages(@Param() objectIdParamDto: ObjectIdParamDto) {
+        return this.messageService.getPrivateMessages(objectIdParamDto.objectId);
+    }
+
     @Post()
     send(@Body() sendMessageDto: SendMessageDto) {
         this.messageGateway.privateMessage(sendMessageDto);
